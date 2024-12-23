@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITANET SHOP</title>
+    <style>
+        /* Design di base */
+        body {
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            align-items: center;
+        }
+        h1 {
+            font-size: 36px;
+        }
+        .logo {
+            width: 100px;
+        }
+        .cart {
+            position: relative;
+            cursor: pointer;
+        }
+        .cart-icon {
+            width: 40px;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .products {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 50px;
+        }
+        .product {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .product h2 {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        .price {
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        .highlight {
+            color: red;
+            font-size: 14px;
+            background-color: #333;
+            padding: 5px;
+        }
+        .add-to-cart {
+            background-color: #444;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .cart-popup {
+            position: fixed;
+            right: 80px;
+            top: 80px;
+            background-color: #444;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+        }
+        .cart-popup ul {
+            list-style: none;
+            padding: 0;
+        }
+        .cart-popup li {
+            margin-bottom: 10px;
+        }
+        .remove-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #paypal-button-container {
+            margin-top: 20px;
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: green;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1001;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TITANET SHOP</h1>
+        <img src="https://titanet.it/wp-content/uploads/logo-server-minecraft-titanet-small-icon.png" alt="Logo" class="logo">
+        <div class="cart" onclick="toggleCartPopup()">
+            <img src="https://img.icons8.com/material-outlined/24/ffffff/shopping-cart.png" alt="Carrello" class="cart-icon">
+            <div class="cart-count" id="cart-count">0</div>
+        </div>
+    </header>
+    <div class="products">
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/copper-golem.png" alt="Copper Golem">
+            <h2>Copper</h2>
+            <div class="price">€4.99</div>
+            <button class="add-to-cart" onclick="addToCart('Copper', 4.99)">Aggiungi al carrello</button>
+        </div>
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/iron-golem.png" alt="Iron Golem">
+            <h2>Iron</h2>
+            <div class="price">€9.99</div>
+            <button class="add-to-cart" onclick="addToCart('Iron', 9.99)">Aggiungi al carrello</button>
+        </div>
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/diamond-golem.png" alt="Diamond Golem">
+            <h2>Diamond</h2>
+            <div class="price">€24.99</div>
+            <div class="highlight">MIGLIORE QUALITA-PREZZO</div>
+            <button class="add-to-cart" onclick="addToCart('Diamond', 24.99)">Aggiungi al carrello</button>
+        </div>
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/emerald-golem.png" alt="Emerald Golem">
+            <h2>Emerald</h2>
+            <div class="price">€49.99</div>
+            <button class="add-to-cart" onclick="addToCart('Emerald', 49.99)">Aggiungi al carrello</button>
+        </div>
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/netherite-golem.png" alt="Netherite Golem">
+            <h2>Netherite</h2>
+            <div class="price">€99.99</div>
+            <button class="add-to-cart" onclick="addToCart('Netherite', 99.99)">Aggiungi al carrello</button>
+        </div>
+        <div class="product">
+            <img src="https://titanet.it/wp-content/uploads/void-golem.png" alt="Void Golem">
+            <h2>Void Golem</h2>
+            <div class="price">€??,??</div>
+            <div class="highlight">VOID GOLEM</div>
+            <button class="add-to-cart" onclick="addToCart('Void Golem', '??,??')">Aggiungi al carrello</button>
+        </div>
+    </div>
+    <div class="cart-popup" id="cart-popup">
+        <h3>Il tuo carrello:</h3>
+        <ul id="cart-items"></ul>
+        <div id="paypal-button-container"></div>
+    </div>
+    <script src="https://www.paypal.com/sdk/js?client-id=AZxfqNzIB_vmIsIyI-j8y5effKA3WbJRsj0xRNUbV519wBwaI3UfCTP9OuTRtJ4p4Hx_LM0oP8TCzW2f"></script>
+    <script>
+        let cart = [];
+        let cartCount = 0;
+
+        // Carica i dati dal localStorage
+        function loadCartFromLocalStorage() {
+            const savedCart = localStorage.getItem('cart');
+            const savedCartCount = localStorage.getItem('cartCount');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            if (savedCartCount) {
+                cartCount = parseInt(savedCartCount, 10);
+            }
+            document.getElementById("cart-count").textContent = cartCount;
+            updateCartPopup();
+        }
+
+        function saveCartToLocalStorage() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem('cartCount', cartCount);
+        }
+
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            cartCount++;
+            document.getElementById("cart-count").textContent = cartCount;
+            showNotification(`${productName} aggiunto al carrello!`);
+            saveCartToLocalStorage();
+            updateCartPopup();
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement("div");
+            notification.textContent = message;
+            notification.classList.add("notification");
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function updateCartPopup() {
+            const cartItems = document.getElementById("cart-items");
+            cartItems.innerHTML = "";
+            cart.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.textContent = `${item.name} - €${item.price}`;
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "Rimuovi";
+                removeBtn.classList.add("remove-btn");
+                removeBtn.onclick = () => removeFromCart(index);
+                li.appendChild(removeBtn);
+                cartItems.appendChild(li);
+            });
+            renderPayPalButton();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            cartCount--;
+            document.getElementById("cart-count").textContent = cartCount;
+            saveCartToLocalStorage();
+            updateCartPopup();
+        }
+
+        function toggleCartPopup() {
+            const cartPopup = document.getElementById("cart-popup");
+            cartPopup.style.display = cartPopup.style.display === "block" ? "none" : "block";
+        }
+
+        function renderPayPalButton() {
+            const paypalContainer = document.getElementById("paypal-button-container");
+            paypalContainer.innerHTML = "";
+            if (cart.length === 0) return;
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: cart.reduce((total, item) => total + item.price, 0).toFixed(2),
+                            },
+                        }],
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        alert(`Pagamento effettuato con successo! Grazie, ${details.payer.name.given_name}`);
+                        cart = [];
+                        cartCount = 0;
+                        saveCartToLocalStorage();
+                        document.getElementById("cart-count").textContent = cartCount;
+                        updateCartPopup();
+                    });
+                },
+            }).render('#paypal-button-container');
+        }
+
+        // Carica il carrello al caricamento della pagina
+        window.onload = loadCartFromLocalStorage;
+    </script>
+</body>
+</html>
